@@ -61,6 +61,9 @@
     overflow:hidden;
   }
   .slide.active{display:flex; animation:fade .35s ease}
+  /* click-to-reveal fragments: keep layout space (opacity), fade+rise in */
+  .frag{opacity:0;transform:translateY(10px);transition:opacity .4s ease, transform .4s ease}
+  .frag.show{opacity:1;transform:none}
   @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
   /* Auto-fit wrapper: holds all body content (not header/footer chrome).
      JS scales it down only if natural content would exceed the safe-area,
@@ -132,6 +135,7 @@
   .chart-box.h-md{height:262px}
   .chart-box.h-lg{height:300px}
   .chart-box.h-fit1{height:222px}   /* slide 1 charts — fill space above the balance bar */
+  .chart-box.h-xl{height:320px}
   .cap{font-size:13px;color:var(--ink-soft);margin-top:6px;font-style:italic}
 
   /* slide 1 — segment mix pie + margin panel + balance bar */
@@ -153,11 +157,41 @@
   .bs-box.gd .bs-h{color:var(--gold)} .bs-box.bd .bs-h{color:var(--burgundy)}
   .bs-t{font-size:12.5px;color:var(--ink-soft);margin-top:3px;line-height:1.32}
 
+  /* prominent bottom takeaway bar */
+  .takeaway{background:var(--green-soft);border:1px solid #cfe0d4;border-left:5px solid var(--green);border-radius:9px;padding:11px 16px;font-size:14px;color:var(--green);line-height:1.42;flex:0 0 auto}
+  .takeaway .tk{display:inline-block;background:var(--green);color:#fff;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:2px 10px;border-radius:20px;margin-right:9px;vertical-align:middle}
+  .imp{margin-top:auto;padding-top:7px;font-size:13px;color:var(--green);font-weight:700}
+
+  /* slide 6 — today vs Year-4 segment pies */
+  .piepair{display:flex;gap:14px;flex:0 0 auto}
+  .pieblock{flex:1;display:flex;flex-direction:column;align-items:center;min-width:0}
+  .pietitle{font-size:13.5px;color:var(--ink-soft);font-weight:700;margin-bottom:5px;text-align:center}
+  .pietitle strong{color:var(--green);font-size:15px}
+  .cagrlist{display:flex;flex-direction:column;gap:7px;margin-top:12px;font-size:13.5px;color:var(--ink-soft)}
+  .cagrlist span{display:flex;align-items:center;gap:9px}
+  .cagrlist strong{color:var(--ink)}
+  /* slide 9 — 2x2 pie grid (2024 vs Year 4, sales vs EBIT) */
+  .pie4{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;flex:0 0 auto}
+  .pie4 .pieblock{gap:2px}
+  .pie-tbd{width:100%;height:100px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12px;color:var(--ink-soft);font-style:italic;border:1px dashed var(--line);border-radius:8px;padding:6px}
+
   /* ===== Tables ===== */
   table{width:100%;border-collapse:collapse;font-size:13.5px}
   th,td{text-align:left;padding:6px 10px;border-bottom:1px solid var(--line);vertical-align:top}
   th{background:var(--green);color:#fff;font-weight:700;font-size:13px;letter-spacing:.02em}
   tr:nth-child(even) td{background:rgba(228,236,229,.4)}
+  tr.hl td{background:#efe3c6 !important}
+  td.sect{background:var(--green) !important;color:#fff;font-weight:800;font-size:12.5px;letter-spacing:.03em}
+  tr.tot td{background:var(--gold-soft) !important;font-weight:800;color:var(--ink)}
+  td.tbd{color:var(--ink-soft);font-style:italic}
+  /* investment strip aligned under a chart */
+  .yearstrip{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px;padding:0 8px 0 46px}
+  .yearstrip div{background:var(--gold-soft);border-radius:6px;padding:5px 4px;text-align:center;font-size:11.5px;color:#7a5a1c;line-height:1.2}
+  .yearstrip div strong{display:block;color:var(--green);font-size:13.5px;margin-top:2px}
+  /* MAP / Frozen revenue toggle */
+  .rtoggle{display:inline-flex;border:1px solid var(--line);border-radius:20px;overflow:hidden;flex:0 0 auto}
+  .rtoggle button{border:none;background:#fff;color:var(--ink-soft);font-size:11px;font-weight:800;letter-spacing:.02em;padding:3px 12px;cursor:pointer;font-family:inherit}
+  .rtoggle button.on{background:var(--green);color:#fff}
   td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
   .pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:700}
   .pill.hi{background:#f4d9d9;color:var(--burgundy)}
@@ -168,7 +202,7 @@
 
   /* ===== Pillars ===== */
   .pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;flex:0 0 auto}
-  .pillar{background:var(--paper);border:1px solid var(--line);border-radius:11px;padding:14px 16px;display:flex;flex-direction:column;border-top:5px solid var(--green)}
+  .pillar{background:var(--paper);border:1px solid var(--line);border-radius:11px;padding:11px 14px;display:flex;flex-direction:column;border-top:5px solid var(--green)}
   .pillar:nth-child(2){border-top-color:var(--gold)}
   .pillar:nth-child(3){border-top-color:var(--burgundy)}
   .pillar:nth-child(4){border-top-color:var(--green-2)}
@@ -177,16 +211,22 @@
   .pillar p{font-size:13.5px;color:var(--ink-soft);line-height:1.45}
 
   /* ===== Timeline ===== */
-  .timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:0;flex:1 1 auto;min-height:0}
+  .timeline{display:grid;grid-template-columns:84px repeat(4,1fr);gap:0;flex:0 0 auto}
+  /* compact 3-row metrics table; first col 84px matches the timeline gutter so year-pairs align */
+  .s7tbl{width:100%;table-layout:fixed;border-collapse:collapse;margin-top:12px;flex:0 0 auto}
+  .s7tbl th,.s7tbl td{text-align:center;padding:5px 3px;border:1px solid var(--line);font-size:13px}
+  .s7tbl thead th{background:var(--green);color:#fff;font-weight:700;font-size:11px}
+  .s7tbl td:first-child,.s7tbl th:first-child{width:84px;text-align:left;font-weight:800;color:var(--green);background:var(--green-soft)}
+  .s7tbl tr.tot td{background:var(--gold-soft);font-weight:800}
   .yr{position:relative;padding:0 14px;display:flex;flex-direction:column}
   .yr:not(:last-child){border-right:1px dashed var(--line)}
   .yr .ytag{font-size:15px;font-weight:800;color:#fff;background:var(--green);border-radius:7px;padding:6px 10px;text-align:center;margin-bottom:4px}
   .yr:nth-child(2) .ytag{background:var(--gold)}
   .yr:nth-child(3) .ytag{background:var(--burgundy)}
   .yr:nth-child(4) .ytag{background:var(--green-2)}
-  .yr .theme{font-size:13px;font-weight:700;color:var(--green);text-align:center;margin-bottom:10px;min-height:34px}
-  .yr ul{list-style:none;display:flex;flex-direction:column;gap:7px}
-  .yr li{font-size:12.5px;color:var(--ink-soft);line-height:1.4;padding-left:14px;position:relative}
+  .yr .theme{font-size:14px;font-weight:700;color:var(--green);text-align:center;margin-bottom:12px;min-height:34px}
+  .yr ul{list-style:none;display:flex;flex-direction:column;gap:9px}
+  .yr li{font-size:14px;color:var(--ink-soft);line-height:1.45;padding-left:15px;position:relative}
   .yr li::before{content:"›";position:absolute;left:0;color:var(--gold);font-weight:800}
   .yr .milestone{margin-top:auto;padding-top:10px;font-size:13px;font-weight:800;color:var(--burgundy)}
 
@@ -201,6 +241,10 @@
   #s-title .flag{display:flex;gap:0;width:90px;height:10px;border-radius:3px;overflow:hidden;margin-bottom:26px}
   #s-title .flag span{flex:1}
   #s-title .meta{margin-top:34px;font-size:14px;color:#cfd6cb;border-top:1px solid rgba(255,255,255,.25);padding-top:16px;max-width:60ch}
+  #s-title .title-row{display:flex;align-items:center;gap:44px;width:100%}
+  #s-title .title-text{flex:1;min-width:0}
+  #s-title .title-art{flex:0 0 auto;width:clamp(240px,30%,360px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(250,246,236,.16),rgba(250,246,236,.04));display:flex;align-items:center;justify-content:center}
+  #s-title .title-art svg{width:82%;height:82%;filter:drop-shadow(0 6px 16px rgba(0,0,0,.25))}
 
   /* divider slide */
   .divider{justify-content:center;background:linear-gradient(135deg,#7E2B2B,#5e1f1f)}
@@ -223,12 +267,12 @@
   /* ===== SWOT 2x2 (slide 2) ===== */
   /* content-sized grid: cards in a row stretch equal (align-items:stretch),
      rows never force-shrink, so text can't overflow onto the band below */
-  .swot{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:11px;flex:0 0 auto}
-  .swot .card{display:flex;flex-direction:column;padding:11px 16px}
+  .swot{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:9px;flex:0 0 auto}
+  .swot .card{display:flex;flex-direction:column;padding:9px 15px}
   .swot .card h3{font-size:17px;margin-bottom:7px}
   .swot ul.tick{gap:5px}
   .swot ul.tick li{font-size:14px;line-height:1.38}
-  .obj-band{background:var(--green);border-radius:12px;padding:10px 20px 12px;display:flex;flex-direction:column;gap:7px;flex:0 0 auto}
+  .obj-band{background:var(--green);border-radius:12px;padding:8px 18px 10px;display:flex;flex-direction:column;gap:6px;flex:0 0 auto}
   .obj-band .ttl{color:var(--gold-soft);font-weight:800;font-size:12px;letter-spacing:.16em;text-transform:uppercase}
   .obj-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
   .obj-metric{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:9px;padding:7px 12px}
@@ -238,9 +282,9 @@
   .obj-metric .mv .arr{color:var(--gold);margin:0 5px;font-weight:800}
   .obj-note{color:var(--gold-soft);font-size:13.5px;font-weight:700;border-top:1px solid rgba(255,255,255,.22);padding-top:9px;line-height:1.4}
   .obj-dirs{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-  .obj-dir{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:9px;padding:11px 15px}
+  .obj-dir{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:9px;padding:9px 14px}
   .obj-dir .dn{display:block;color:var(--gold-soft);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
-  .obj-dir .dt{color:#eef4ef;font-size:14.5px;font-weight:600;line-height:1.42}
+  .obj-dir .dt{color:#eef4ef;font-size:14px;font-weight:600;line-height:1.38}
 
   /* ===== Enriched pillars (slide 3) ===== */
   .pillar{justify-content:flex-start}
@@ -250,25 +294,25 @@
   .pillar:nth-child(2) .bigstat,.pillar:nth-child(2) .ptag{color:var(--gold)}
   .pillar:nth-child(3) .bigstat,.pillar:nth-child(3) .ptag{color:var(--burgundy)}
   .pillar:nth-child(4) .bigstat,.pillar:nth-child(4) .ptag{color:var(--green-2)}
-  .prow{display:flex;gap:9px;align-items:baseline;font-size:13px;color:var(--ink-soft);line-height:1.4;padding:8px 0;border-top:1px solid var(--line)}
+  .prow{display:flex;gap:9px;align-items:baseline;font-size:13px;color:var(--ink-soft);line-height:1.38;padding:6px 0;border-top:1px solid var(--line)}
   .prow .ptag{font-weight:800;color:var(--green);min-width:30px;flex:0 0 auto;font-size:13px}
   .prow.note{color:var(--burgundy);font-style:italic;font-size:12.5px}
 
   /* slide 3 — prominent destination + financing row */
   .s3bottom{display:grid;grid-template-columns:1.12fr 1fr;gap:16px;flex:1 1 auto;min-height:0}
-  .destbox{background:var(--green);border-radius:11px;padding:15px 20px;display:flex;flex-direction:column}
+  .destbox{background:var(--green);border-radius:11px;padding:12px 18px;display:flex;flex-direction:column}
   .destbox h3{color:#fff;font-size:16px;margin-bottom:11px;display:flex;align-items:center;gap:8px}
   .destbox h3 .lab{background:var(--gold);color:#fff;font-size:11px;font-weight:800;letter-spacing:.08em;padding:2px 9px;border-radius:20px;text-transform:uppercase}
   .destgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1}
-  .dchip{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:9px;padding:10px 15px;display:flex;flex-direction:column;justify-content:center}
+  .dchip{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:9px;padding:8px 13px;display:flex;flex-direction:column;justify-content:center}
   .dchip .dl{color:#bcd2c3;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
-  .dchip .dv{color:#fff;font-size:19px;font-weight:800;margin-top:4px;white-space:nowrap}
+  .dchip .dv{color:#fff;font-size:17px;font-weight:800;margin-top:3px;white-space:nowrap}
   .dchip .dv .from{color:#9fc0ab;font-weight:600}
   .dchip .dv .arr{color:var(--gold);margin:0 6px}
-  .finbox{background:var(--paper);border:1px solid var(--line);border-top:4px solid var(--gold);border-radius:11px;padding:15px 20px;display:flex;flex-direction:column}
+  .finbox{background:var(--paper);border:1px solid var(--line);border-top:4px solid var(--gold);border-radius:11px;padding:12px 18px;display:flex;flex-direction:column}
   .finbox h3{color:var(--green);font-size:16px;margin-bottom:9px;display:flex;align-items:center;gap:8px}
   .finbox h3 .lab{background:var(--gold-soft);color:#7a5a1c;font-size:11px;font-weight:800;letter-spacing:.06em;padding:2px 9px;border-radius:20px;text-transform:uppercase}
-  .fin-row{display:flex;gap:10px;font-size:13.5px;color:var(--ink-soft);padding:7px 0;border-top:1px solid var(--line);line-height:1.4}
+  .fin-row{display:flex;gap:10px;font-size:13.5px;color:var(--ink-soft);padding:5px 0;border-top:1px solid var(--line);line-height:1.36}
   .fin-row:first-of-type{border-top:none}
   .fin-row .ftag{font-weight:800;color:var(--gold);min-width:74px;flex:0 0 auto}
   .finsum{margin-top:auto;padding-top:10px;font-size:13px;color:var(--green);font-weight:800;line-height:1.4}
@@ -307,11 +351,35 @@
 
   <!-- ===== 0 TITLE ===== -->
   <section class="slide active" id="s-title" data-title="Title">
-    <div class="flag"><span style="background:#1E7A3D"></span><span style="background:#f7f4ea"></span><span style="background:#B5302C"></span></div>
-    <div class="eyebrow">Pasta Marini SpA · Board / SteerCo Pitch</div>
-    <h1 class="title">From Margin Trap to Premium Growth</h1>
-    <p class="lead">A focused 4-year internationalization strategy — rebalancing the domestic base, deepening Europe, and entering the US behind branded fresh pasta.</p>
-    <div class="meta">Strategic Plan 2025–2028 &nbsp;·&nbsp; Restore profitability &nbsp;·&nbsp; €50M → €60–65M revenue &nbsp;·&nbsp; ~€4.3M largely self-funded</div>
+    <div class="title-row">
+      <div class="title-text">
+        <div class="flag"><span style="background:#1E7A3D"></span><span style="background:#f7f4ea"></span><span style="background:#B5302C"></span></div>
+        <div class="eyebrow">Pasta Marini SpA · Board / SteerCo Pitch</div>
+        <h1 class="title">From Margin Trap to Premium Growth</h1>
+        <p class="lead">A focused 4-year internationalization strategy — rebalancing the domestic base, deepening Europe, and entering the US behind branded fresh pasta.</p>
+        <div class="meta">Strategic Plan 2025–2028 &nbsp;·&nbsp; Restore profitability &nbsp;·&nbsp; €50M → €60–65M revenue &nbsp;·&nbsp; ~€4.3M largely self-funded</div>
+      </div>
+      <div class="title-art">
+        <svg viewBox="0 0 350 350" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Pasta bowl">
+          <g>
+            <path style="fill:#ACABB1;" d="M225,90c0,8.284-6.716,15-15,15H60c-8.284,0-15-6.716-15-15l0,0c0-8.284,6.716-15,15-15h150C218.284,75,225,81.716,225,90L225,90z"/>
+            <path style="fill:#BD3C1A;" d="M95,75H60c-8.284,0-15,6.716-15,15s6.716,15,15,15h35V75z"/>
+            <path style="fill:#CDCDD0;" d="M215,90l-5-35c-19.33,0-35,15.67-35,35s15.67,35,35,35L215,90z"/>
+            <polygon style="fill:#FFDA44;" points="265,225 205,225 205,55 235,55 265,145 "/>
+            <path style="fill:#FFDA44;" d="M257.94,260c4.546-10.759,7.06-22.586,7.06-35c0-49.706-40.294-90-90-90s-90,40.294-90,90c0,12.414,2.514,24.241,7.06,35H257.94z"/>
+            <path style="fill:#FFAD41;" d="M175,260c0-22.923,0-45,0-125c-49.706,0-90,40.294-90,90c0,12.414,2.514,24.241,7.06,35H175z"/>
+            <path style="fill:#FFE98F;" d="M223.719,260C230.81,250.147,235,238.066,235,225c0-33.137-26.863-60-60-60s-60,26.863-60,60c0,13.066,4.189,25.147,11.281,35H223.719z"/>
+            <circle style="fill:#FFDA44;" cx="175" cy="225" r="30"/>
+            <path style="fill:#FFAD41;" d="M175,255c-16.568,0-30-13.432-30-30s13.432-30,30-30"/>
+            <circle style="fill:#BD3C1A;" cx="85" cy="225" r="40"/>
+            <circle style="fill:#FF5023;" cx="265" cy="225" r="40"/>
+            <path style="fill:#91DC5A;" d="M335,225H15c-8.284,0-15,6.716-15,15s6.716,15,15,15h10c0,22.091,17.909,40,40,40h220c22.091,0,40-17.909,40-40h10c8.284,0,15-6.716,15-15S343.284,225,335,225z"/>
+            <path style="fill:#64C37D;" d="M175,225H15c-8.284,0-15,6.716-15,15s6.716,15,15,15h10c0,22.091,17.909,40,40,40h110V225z"/>
+            <path style="fill:#FFE98F;" d="M235,55v95c0,8.284,6.716,15,15,15s15-6.716,15-15V55H235z"/>
+          </g>
+        </svg>
+      </div>
+    </div>
   </section>
 
   <!-- ===== 1 CURRENT POSITION ===== -->
@@ -414,21 +482,21 @@
     </div>
     <div class="body">
       <div class="pillars">
-        <div class="pillar">
+        <div class="pillar frag" data-frag="1">
           <div class="n">PILLAR 1 · DOMESTIC</div>
           <h3>Rebalance the base</h3>
           <div class="prow"><span class="ptag">Mix</span><span>Cut private label <strong>45% → 25%</strong> of sales</span></div>
           <div class="prow"><span class="ptag">Method</span><span>Wind down Coop/Esselunga contract-by-contract</span></div>
           <div class="prow"><span class="ptag">Gain</span><span>Free ~25% idle capacity for branded export</span></div>
         </div>
-        <div class="pillar">
+        <div class="pillar frag" data-frag="2">
           <div class="n">PILLAR 2 · EUROPE</div>
           <h3>Differentiated DACH</h3>
           <div class="prow"><span class="ptag">DE</span><span><strong>Germany</strong> — expand premium across dry + fresh</span></div>
           <div class="prow"><span class="ptag">AT</span><span><strong>Austria</strong> — scale down; freed capacity funds US</span></div>
           <div class="prow"><span class="ptag">DK</span><span><strong>Denmark</strong> — new organic-led fresh pillar</span></div>
         </div>
-        <div class="pillar">
+        <div class="pillar frag" data-frag="3">
           <div class="n">PILLAR 3 · UNITED STATES</div>
           <h3>Two-track entry</h3>
           <div class="prow"><span class="ptag">Dry</span><span><strong>Y1</strong> · specialty distributor — cash bridge</span></div>
@@ -437,7 +505,7 @@
         </div>
       </div>
       <div class="s3bottom">
-        <div class="destbox">
+        <div class="destbox frag" data-frag="4">
           <h3><span class="lab">Destination</span> Where we land by Year 4</h3>
           <div class="destgrid">
             <div class="dchip"><div class="dl">Revenue</div><div class="dv"><span class="from">€50M</span><span class="arr">→</span>€60–65M</div></div>
@@ -446,7 +514,7 @@
             <div class="dchip"><div class="dl">Private label</div><div class="dv"><span class="from">45%</span><span class="arr">→</span>25%</div></div>
           </div>
         </div>
-        <div class="finbox">
+        <div class="finbox frag" data-frag="5">
           <h3><span class="lab">How we'll fund it</span></h3>
           <div class="fin-row"><span class="ftag">Debt</span><span>Favorable export-credit (SACE-style) on ~1.0x leverage</span></div>
           <div class="fin-row"><span class="ftag">Capital</span><span>Working capital released by the private-label wind-down</span></div>
@@ -465,36 +533,35 @@
       <h2>In Europe, <span class="accent">Germany is a large, growing opportunity</span>, Austria is shrinking, and Denmark is untapped</h2>
     </div>
     <div class="body">
-      <div class="cols">
-        <div class="col" style="flex:1.05">
-          <div class="card" style="flex:1">
-            <h3>Market opportunity at a glance</h3>
-            <table>
-              <thead><tr><th>Market</th><th>Size / position</th><th>Growth</th><th class="ctr">Call</th></tr></thead>
-              <tbody>
-                <tr><td><strong>Germany</strong></td><td>2nd-largest Italian pasta export market ($631M); Italy = ~81% of imports</td><td>~3.5% CAGR; fresh ~6%+</td><td class="ctr"><span class="pill ok">Expand</span></td></tr>
-                <tr><td><strong>Austria</strong></td><td>Small, mature; entrenched domestic champion (Recheis/Agrana)</td><td>Flat / stagnant</td><td class="ctr"><span class="pill med">Scale down</span></td></tr>
-                <tr><td><strong>Denmark</strong></td><td>World's #1 organic retail share (11.8% of food)</td><td>Organic-led</td><td class="ctr"><span class="pill lo">New pillar</span></td></tr>
-              </tbody>
-            </table>
-            <div class="two-line-note gd" style="margin-top:14px">Earlier drafts treated "DACH" as one market. Differentiated research shows that misallocates scarce team bandwidth — Germany earns the investment, Austria funds it, Denmark is the new upside.</div>
+      <div class="card">
+        <h3>EU pasta market by segment — where the growth is</h3>
+        <table>
+          <thead><tr><th>Segment</th><th>Share of EU pasta market</th><th>Growth profile</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Dried (dry)</strong></td><td>~75–83% vol; ~79–83% value</td><td>Slow but stable; largest base</td><td>Shelf-stable, low cost, pantry staple</td></tr>
+            <tr class="hl"><td><strong>Chilled / fresh</strong></td><td>Smaller base, rising share</td><td><strong>Fastest-growing: ~6.1–9.9% CAGR</strong></td><td>Premiumization, freshness, ready-to-cook</td></tr>
+            <tr><td><strong>Stuffed &amp; couscous</strong></td><td>Niche but resilient (DE imports)</td><td>Modest (~0.7% vol / ~1.7% value)</td><td>Convenience meal-solution</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="cols" style="flex:0 0 auto">
+        <div class="col">
+          <div class="card gn-top" style="display:flex;flex-direction:column;padding:10px 14px"><h3>🇩🇪 Germany <span class="pill ok">Expand</span></h3>
+            <p>Above Birkel (heritage) &amp; Barilla (mainstream), the <strong>premium-artisanal tier is unclaimed</strong> (De Cecco is the comp).</p>
           </div>
         </div>
         <div class="col">
-          <div class="card"><h3>Germany — competitive landscape</h3>
-            <table>
-              <tbody>
-                <tr><td>Newlat (Birkel)</td><td>Heritage leader, ~9M households</td></tr>
-                <tr><td>Barilla</td><td>Global mainstream, not super-premium</td></tr>
-                <tr><td><strong>De Cecco</strong></td><td>Premium/artisanal — closest comparable</td></tr>
-                <tr><td>Alb-Gold</td><td>Organic/regional specialist</td></tr>
-                <tr><td>Private label</td><td>Largest volume; 25–40% below branded</td></tr>
-              </tbody>
-            </table>
-            <div class="two-line-note" style="margin-top:12px">The unclaimed tier is <strong>premium-artisanal</strong>: above Birkel's heritage-mainstream, distinct from Barilla, at greater scale than Alb-Gold's niche.</div>
+          <div class="card gd-top" style="display:flex;flex-direction:column;padding:10px 14px"><h3>🇦🇹 Austria <span class="pill med">Scale down</span></h3>
+            <p><strong>Recheis (Agrana)</strong> dominates — vertically integrated &amp; entrenched, so bridge, don't battle.</p>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card bd-top" style="display:flex;flex-direction:column;padding:10px 14px"><h3>🇩🇰 Denmark <span class="pill lo">New pillar</span></h3>
+            <p><strong>Organic private label (Coop Änglamark)</strong> leads over footloose imports — win with a certified-organic import.</p>
           </div>
         </div>
       </div>
+      <div class="takeaway"><span class="tk">Takeaway</span>Play the fast-growing fresh/chilled lane — with a distinct plan per market: <strong>expand premium in Germany, use Austria as a capacity bridge, and enter Denmark as a new organic pillar.</strong></div>
     </div>
     <div class="footer-tag">Pasta Marini · Confidential</div>
   </section>
@@ -508,16 +575,21 @@
     <div class="body">
       <div class="cols">
         <div class="col">
-          <div class="card gn-top"><h3>🇩🇪 Germany — Expand</h3><ul class="tick"><li>Grow premium brand across dry + fresh</li><li>Direct-retailer / quasi-equity model; cut out agents</li><li>Prioritise fast-growing fresh; <strong>margin 15%+</strong></li></ul></div>
-          <div class="card gd-top"><h3>🇦🇹 Austria — Scale down (capacity bridge)</h3><ul class="tick gd"><li>Wind down non-contractual volume; keep profitable PL</li><li>Freed Italian line-hours fund US export in Y1–2</li></ul></div>
-          <div class="card bd-top"><h3>🇩🇰 Denmark — New organic pillar</h3><ul class="tick bd"><li>Organic-certified fresh SKUs via German cold-chain hub</li><li>Budget EU organic cert as net-new (12+ mo lead)</li></ul></div>
+          <div class="card gn-top frag" data-frag="1"><h3>🇩🇪 Germany — Expand</h3><ul class="tick"><li>Grow premium brand across dry + fresh</li><li>Direct-retailer / quasi-equity model; cut out agents</li><li>Prioritise fast-growing fresh; <strong>margin 15%+</strong></li></ul></div>
+          <div class="card gd-top frag" data-frag="1"><h3>🇦🇹 Austria — Scale down (capacity bridge)</h3><ul class="tick gd"><li>Wind down non-contractual volume; keep profitable PL</li><li>Freed Italian line-hours fund US export in Y1–2</li></ul></div>
+          <div class="card bd-top frag" data-frag="1"><h3>🇩🇰 Denmark — New organic pillar</h3><ul class="tick bd"><li>Organic-certified fresh SKUs via German cold-chain hub</li><li>Budget EU organic cert as net-new (12+ mo lead)</li></ul></div>
         </div>
         <div class="col" style="flex:1.1">
-          <div class="card" style="flex:1;display:flex;flex-direction:column">
-            <h3>Capacity reallocation logic</h3>
-            <p style="margin-bottom:10px">Reducing private-label and Austrian volume frees Italian production hours — redirected to higher-margin branded export, with no major new domestic capex.</p>
-            <div class="chart-box h-md"><canvas id="c5"></canvas></div>
-            <div class="cap">Illustrative reallocation of freed Italian capacity toward branded export volume.</div>
+          <div class="card frag" data-frag="2" style="flex:1;display:flex;flex-direction:column">
+            <h3>Combined EU revenue by market — base case (€M)</h3>
+            <div class="chart-box h-sm"><canvas id="c5"></canvas></div>
+            <div class="yearstrip">
+              <div>Year 1<strong>8.7%</strong></div>
+              <div>Year 2<strong>11.8%</strong></div>
+              <div>Year 3<strong>14.2%</strong></div>
+              <div>Year 4<strong>16.0%</strong></div>
+            </div>
+            <div class="cap">Blended EU gross margin by year (up from ~5% today). Revenue stays roughly flat as Austria winds down — margin recovery is the value driver.</div>
           </div>
         </div>
       </div>
@@ -532,17 +604,26 @@
       <h2>The US fresh-pasta segment is growing ~2× dry — we <span class="accent">enter through specialty channels, never mass</span></h2>
     </div>
     <div class="body">
-      <div class="stats">
-        <div class="stat"><div class="num">$27–28B</div><div class="lab">Total US pasta market</div><div class="sub">4.4–4.8% CAGR</div></div>
-        <div class="stat gd"><div class="num">~$6.2B</div><div class="lab">US fresh / chilled pasta</div><div class="sub">8.3–10.6% CAGR — ~2× dry</div></div>
-      </div>
       <div class="cols">
-        <div class="col">
-          <div class="card" style="flex:1"><h3>Segment growth — why fresh leads</h3>
-            <div class="chart-box h-sm"><canvas id="c6"></canvas></div>
+        <div class="col" style="flex:1.12">
+          <div class="card" style="display:flex;flex-direction:column"><h3>US pasta market — fresh keeps gaining share</h3>
+            <div class="piepair">
+              <div class="pieblock">
+                <div class="pietitle">Today · <strong>$27.5B</strong></div>
+                <div class="chart-box" style="height:168px"><canvas id="c6a"></canvas></div>
+              </div>
+              <div class="pieblock">
+                <div class="pietitle">Projected Year 4 · <strong>~$34B</strong></div>
+                <div class="chart-box" style="height:168px"><canvas id="c6b"></canvas></div>
+              </div>
+            </div>
+            <div class="cagrlist">
+              <span><i class="dot" style="background:#C9BFA8"></i>Dry &amp; shelf-stable — <strong>~4.2% CAGR</strong></span>
+              <span><i class="dot" style="background:#B0832F"></i>Fresh / chilled — <strong>~9.5% CAGR</strong> (≈2× dry)</span>
+            </div>
           </div>
         </div>
-        <div class="col" style="flex:1.2">
+        <div class="col">
           <div class="card" style="flex:1"><h3>Competitive landscape by segment</h3>
             <table>
               <thead><tr><th>Player</th><th>Position</th><th>Our move</th></tr></thead>
@@ -569,19 +650,24 @@
     </div>
     <div class="body">
       <div class="timeline">
+        <div class="tlabel"></div>
         <div class="yr"><div class="ytag">Year 1 · 2025</div><div class="theme">Infrastructure & first dry revenue</div>
-          <ul><li>Engage specialty distributor (dry); tariff risk-sharing clause</li><li>FDA registration; US-compliant packaging</li><li>Commission <strong>MAP feasibility study</strong></li></ul>
-          <div class="milestone">€340K · 50 doors</div></div>
+          <ul><li>Engage specialty distributor (dry); tariff risk-share clause</li><li>FDA registration + commission <strong>MAP feasibility study</strong></li></ul></div>
         <div class="yr"><div class="ytag">Year 2 · 2026</div><div class="theme">Fresh MAP launch</div>
-          <ul><li>Weekly reefer shipping Pescara→NY/Newark</li><li>Launch MAP fresh at Uncle Giuseppe's pilot stores</li><li>Add frozen pastries (lower-risk SKU)</li></ul>
-          <div class="milestone">€802K · 13 fresh doors</div></div>
+          <ul><li>Launch MAP fresh at Uncle Giuseppe's; weekly reefer Pescara→NY</li><li>Add frozen pastries (lower-risk SKU)</li></ul></div>
         <div class="yr"><div class="ytag">Year 3 · 2027</div><div class="theme">Scale & honest review</div>
-          <ul><li>Expand chain coverage; add Eataly, Bristol Farms</li><li>Evaluate co-branded line & cold-chain quasi-equity</li><li>Dry track: keep if ≥15% margin, else wind down</li></ul>
-          <div class="milestone">€1.51M · crossover year</div></div>
+          <ul><li>Expand chains; add Eataly, Bristol Farms</li><li>Dry-track honest review: keep ≥15% or wind down</li></ul></div>
         <div class="yr"><div class="ytag">Year 4 · 2028</div><div class="theme">Consolidate platform</div>
-          <ul><li>Preferred-supplier multi-year agreement</li><li>Evaluate thin US LLC for credibility</li><li>Reassess Canada as a Y5+ scale option</li></ul>
-          <div class="milestone">€2.25M · fresh = majority</div></div>
+          <ul><li>Preferred-supplier multi-year deal; evaluate thin US LLC</li><li>Reassess Canada as a Y5+ scale option</li></ul></div>
       </div>
+      <table class="s7tbl">
+        <thead><tr><th></th><th>doors</th><th>u/wk</th><th>doors</th><th>u/wk</th><th>doors</th><th>u/wk</th><th>doors</th><th>u/wk</th></tr></thead>
+        <tbody>
+          <tr><td>Track 1</td><td>50</td><td>1.5</td><td>90</td><td>2.0</td><td>130</td><td>2.3</td><td>150</td><td>2.5</td></tr>
+          <tr><td>Track 2</td><td>0</td><td>—</td><td>13</td><td>40</td><td>35</td><td>60</td><td>50</td><td>80</td></tr>
+          <tr class="tot"><td>Revenue</td><td colspan="2">€340K</td><td colspan="2">€802K</td><td colspan="2">€1.51M</td><td colspan="2">€2.25M</td></tr>
+        </tbody>
+      </table>
       <div class="cols" style="flex:0 0 auto">
         <div class="two-line-note bd" style="flex:1"><strong>MAP first, with a Year-1 gate.</strong> If feasibility economics disappoint, pivot to frozen as the fresh format — frozen is already retained for pastries and as a secondary SKU.</div>
         <div class="two-line-note" style="flex:1"><strong>Entry mode by stage:</strong> distribution-only → alliance / quasi-equity → optional thin LLC. We deliberately avoid greenfield (Canada) and acquisition early — they don't fit the balance sheet or the risk appetite.</div>
@@ -590,38 +676,38 @@
     <div class="footer-tag">Pasta Marini · Confidential</div>
   </section>
 
-  <!-- ===== 8 FORECASTS & SENSITIVITY ===== -->
+  <!-- ===== 8 FORECASTS & INVESTMENT ===== -->
   <section class="slide" id="s8" data-title="8 · Forecasts & Investment">
     <div class="slide-head">
-      <div class="eyebrow">Slide 8 · US Forecasts, Sensitivity & Investment</div>
-      <h2>US revenue scales to <span class="accent">€2.25M by Year 4 as fresh overtakes dry</span>, within bounded investment</h2>
+      <div class="eyebrow">Slide 8 · US Forecasts & Investment (base case)</div>
+      <h2>Fresh overtakes dry by Year 3, on <span class="accent">~€1.0M of US-specific investment</span></h2>
     </div>
     <div class="body">
       <div class="cols">
         <div class="col">
-          <div class="card" style="flex:1;display:flex;flex-direction:column"><h3>US revenue by track (€000)</h3>
-            <div class="chart-box"><canvas id="c8a"></canvas></div>
-            <div class="cap">Dry funds the build early; fresh becomes the majority of revenue by Y4.</div>
+          <div class="card" style="display:flex;flex-direction:column"><h3>Channel mix — % of US revenue by track</h3>
+            <div class="chart-box h-sm"><canvas id="c8a"></canvas></div>
+            <div class="yearstrip">
+              <div>Year 1<strong>€0.21M</strong></div>
+              <div>Year 2<strong>€0.22M</strong></div>
+              <div>Year 3<strong>€0.31M</strong></div>
+              <div>Year 4<strong>€0.24M</strong></div>
+            </div>
+            <div class="cap">Fresh (Track 2) crosses to the majority in Year 3. US-specific investment (est.) by year — ~€1.0M over 4 years.</div>
           </div>
         </div>
         <div class="col">
-          <div class="card" style="flex:1;display:flex;flex-direction:column"><h3>MAP fresh — Year 4 gross-margin sensitivity</h3>
-            <div class="chart-box"><canvas id="c8b"></canvas></div>
-            <div class="cap">Downside 14% · Base 32% · Upside 49%, driven by spoilage, price & velocity.</div>
-          </div>
-        </div>
-        <div class="col" style="flex:.9">
-          <div class="card gd-top"><h3>Investment (fully loaded)</h3>
-            <table>
-              <tbody>
-                <tr><td>Year 1</td><td class="num">€791K</td></tr>
-                <tr><td>Year 2</td><td class="num">€1.04M</td></tr>
-                <tr><td>Year 3</td><td class="num">€1.25M</td></tr>
-                <tr><td>Year 4</td><td class="num">€1.26M</td></tr>
-                <tr><td><strong>4-yr total</strong></td><td class="num"><strong>~€4.3M</strong></td></tr>
+          <div class="card" style="display:flex;flex-direction:column">
+            <h3 style="justify-content:space-between"><span>Combined US revenue (€000)</span><span id="revToggle" class="rtoggle"><button data-rev="map" class="on">MAP</button><button data-rev="frozen">Frozen</button></span></h3>
+            <div class="chart-box h-sm"><canvas id="c8b"></canvas></div>
+            <table style="margin-top:8px">
+              <thead><tr><th>Base-case gross margin</th><th class="num">Y1</th><th class="num">Y2</th><th class="num">Y3</th><th class="num">Y4</th></tr></thead>
+              <tbody id="mtBody">
+                <tr><td>Track 1 — dry</td><td class="num">13%</td><td class="num">15%</td><td class="num">17%</td><td class="num">18%</td></tr>
+                <tr><td>Track 2 — MAP fresh</td><td class="num">—</td><td class="num">22%</td><td class="num">27%</td><td class="num">32%</td></tr>
+                <tr class="tot"><td>Blended</td><td class="num">13%</td><td class="num">16%</td><td class="num">22%</td><td class="num">26%</td></tr>
               </tbody>
             </table>
-            <div class="two-line-note gd" style="margin-top:12px;font-size:13px">Caveat: figures to be re-estimated precisely after the Year-1 feasibility study before Year-2 capital commitment.</div>
           </div>
         </div>
       </div>
@@ -644,15 +730,25 @@
       </div>
       <div class="cols">
         <div class="col">
-          <div class="card" style="flex:1;display:flex;flex-direction:column"><h3>Margin bridge: 2024 → Year 4 EBIT</h3>
-            <div class="chart-box"><canvas id="c9a"></canvas></div>
-            <div class="cap">Mix shift to fresh, DACH recovery and growth restore profit.</div>
+          <div class="card" style="display:flex;flex-direction:column"><h3>Margin bridge: 2024 → Year 4 EBIT</h3>
+            <div class="chart-box h-sm"><canvas id="c9a"></canvas></div>
+            <div class="cap">Domestic mix shift, EU recovery and US growth restore profit.</div>
           </div>
         </div>
         <div class="col">
-          <div class="card" style="flex:1;display:flex;flex-direction:column"><h3>Year-4 sales mix (€65M)</h3>
-            <div class="chart-box"><canvas id="c9b"></canvas></div>
-            <div class="cap">Branded fresh rises ~10% → ~16%; private label reduced.</div>
+          <div class="card" style="display:flex;flex-direction:column"><h3>Portfolio mix — 2024 vs Year 4</h3>
+            <div class="pie4">
+              <div class="pieblock"><div class="pietitle">2024 · Sales</div><div class="chart-box" style="height:100px"><canvas id="c9s24"></canvas></div></div>
+              <div class="pieblock"><div class="pietitle">Year 4 · Sales</div><div class="chart-box" style="height:100px"><canvas id="c9s4"></canvas></div></div>
+              <div class="pieblock"><div class="pietitle">2024 · EBIT</div><div class="chart-box" style="height:100px"><canvas id="c9e24"></canvas></div></div>
+              <div class="pieblock"><div class="pietitle">Year 4 · EBIT</div><div class="chart-box" style="height:100px"><canvas id="c9e4"></canvas></div></div>
+            </div>
+            <div class="legend-row" style="justify-content:center;font-size:11.5px;margin-top:6px">
+              <span><i class="dot" style="background:#B0832F"></i>Fresh</span>
+              <span><i class="dot" style="background:#1E4D3A"></i>Dry</span>
+              <span><i class="dot" style="background:#D8C79A"></i>Pastries</span>
+              <span><i class="dot" style="background:#B9A98A"></i>Private label</span>
+            </div>
           </div>
         </div>
       </div>
@@ -670,7 +766,7 @@
       <div class="cols">
         <div class="col" style="flex:1.1">
           <div class="card" style="flex:1;display:flex;flex-direction:column"><h3>How the ~€4.3M is funded, by year (€000)</h3>
-            <div class="chart-box"><canvas id="c10"></canvas></div>
+            <div class="chart-box h-xl"><canvas id="c10"></canvas></div>
             <div class="legend-row">
               <span><i class="dot" style="background:#2E6B4F"></i>Export-credit debt (SACE-style)</span>
               <span><i class="dot" style="background:#B0832F"></i>NWC release</span>
@@ -757,373 +853,4 @@
   </section>
 
   <!-- ===== A2 GULF ===== -->
-  <section class="slide" id="sA2" data-title="A2 · Gulf Deep-Dive">
-    <div class="slide-head">
-      <div class="eyebrow">Appendix A2 · Gulf Region Assessment</div>
-      <h2>Gulf entry was rejected: <span class="accent">fast-growing but immaterial at our scale</span>, and exposed to serious regional risk</h2>
-    </div>
-    <div class="body">
-      <div class="card" style="flex:1">
-        <table>
-          <thead><tr><th>Consideration</th><th>Finding</th></tr></thead>
-          <tbody>
-            <tr><td><strong>Market size</strong></td><td>Entire MEA pasta market ~€1.93B (2.56% of global). UAE alone ~$346M — smaller than our existing DACH export business.</td></tr>
-            <tr><td><strong>Growth rate</strong></td><td>Fastest-growing region (~5.2% CAGR) — but growth on a tiny base yields little absolute revenue in 4 years.</td></tr>
-            <tr><td><strong>Competitive structure</strong></td><td>Saudi imports only 46% of its market; UAE is itself a regional producer/re-exporter into the same target markets.</td></tr>
-            <tr><td><strong>Geopolitical risk</strong></td><td>Active war involving Iran (2026); Strait of Hormuz energy risk; Yemen border fragility; Saudi–UAE strategic friction.</td></tr>
-            <tr><td><strong>Compliance burden</strong></td><td>Halal certification alone requires 12–18 months before any commercial activity.</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <div class="footer-tag">Pasta Marini · Confidential</div>
-  </section>
-
-  <!-- ===== A3 CANADA TRADE-OFF ===== -->
-  <section class="slide" id="sA3" data-title="A3 · Canada vs MAP">
-    <div class="slide-head">
-      <div class="eyebrow">Appendix A3 · US Supply-Chain Trade-off</div>
-      <h2>A Canadian plant was rejected on <span class="accent">~10× the capital and financeability</span> — not on strategic logic</h2>
-    </div>
-    <div class="body">
-      <div class="card" style="flex:1">
-        <table>
-          <thead><tr><th>Dimension</th><th>MAP / Italy-export (chosen)</th><th>Canadian bridgehead (rejected)</th></tr></thead>
-          <tbody>
-            <tr><td>4-year CapEx</td><td><span class="pill ok">~€460K</span></td><td><span class="pill hi">~€4.4–6.0M (≈10×)</span></td></tr>
-            <tr><td>Time to fresh US revenue</td><td>Year 2</td><td>Year 3+ (commissioning first)</td></tr>
-            <tr><td>Tariff / antidumping</td><td>Yes on dry — mitigated via positioning & clauses</td><td>Avoided once transformed in Canada</td></tr>
-            <tr><td>New regulatory risk</td><td>None beyond tariff tracking</td><td>USMCA joint review (Jul 2026) unresolved</td></tr>
-            <tr><td>Org. burden</td><td>Manageable by 3–7 person team</td><td>~€260K/yr incremental HR</td></tr>
-            <tr><td>Financeable on current B/S?</td><td><span class="pill ok">Yes</span></td><td><span class="pill hi">No — needs equity partner</span></td></tr>
-            <tr><td>Y3 fresh COGS/kg</td><td>€2.45 (scaling)</td><td>€2.90 (new-facility inefficiency)</td></tr>
-          </tbody>
-        </table>
-        <div class="two-line-note" style="margin-top:14px">The USMCA originating-goods mechanism is real and well-founded — Canada is a credible <strong>Year-5+ scale option</strong>, not a Year-1 commitment.</div>
-      </div>
-    </div>
-    <div class="footer-tag">Pasta Marini · Confidential</div>
-  </section>
-
-  <!-- ===== A4 SENSITIVITY / ASSUMPTIONS ===== -->
-  <section class="slide" id="sA4" data-title="A4 · Sensitivity & Assumptions">
-    <div class="slide-head">
-      <div class="eyebrow">Appendix A4 · Forecast Assumptions & ROI Range</div>
-      <h2>The forecast range hinges on <span class="accent">spoilage, price and velocity</span> — and MAP still wins on absolute profit</h2>
-    </div>
-    <div class="body">
-      <div class="cols">
-        <div class="col">
-          <div class="card" style="flex:1"><h3>MAP fresh — scenario drivers (Year 4)</h3>
-            <table>
-              <thead><tr><th>Driver</th><th class="num">Down</th><th class="num">Base</th><th class="num">Up</th></tr></thead>
-              <tbody>
-                <tr><td>Shrinkage / spoilage</td><td class="num">12%</td><td class="num">6%</td><td class="num">3%</td></tr>
-                <tr><td>Wholesale price (€/kg)</td><td class="num">3.80</td><td class="num">4.50</td><td class="num">5.20</td></tr>
-                <tr><td>Units/door/week</td><td class="num">25</td><td class="num">40</td><td class="num">65</td></tr>
-                <tr><td><strong>Y4 gross margin</strong></td><td class="num">14%</td><td class="num">32%</td><td class="num">49%</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="card"><h3>Dry pasta — base trajectory</h3>
-            <table>
-              <thead><tr><th></th><th class="num">Y1</th><th class="num">Y2</th><th class="num">Y3</th><th class="num">Y4</th></tr></thead>
-              <tbody>
-                <tr><td>Doors</td><td class="num">50</td><td class="num">90</td><td class="num">130</td><td class="num">150</td></tr>
-                <tr><td>Revenue (€K)</td><td class="num">340</td><td class="num">650</td><td class="num">830</td><td class="num">950</td></tr>
-                <tr><td>Gross margin</td><td class="num">13%</td><td class="num">15%</td><td class="num">17%</td><td class="num">18%</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card" style="flex:1;display:flex;flex-direction:column"><h3>MAP vs. frozen — Year 4 base case</h3>
-            <div class="chart-box"><canvas id="cA4"></canvas></div>
-            <div class="cap">Frozen has the higher margin %, but MAP wins on absolute gross profit (€333K vs €291K) on a larger, differentiated base.</div>
-          </div>
-          <div class="two-line-note gd">Both a conservative bottom-up case (€2.25M Y4) and a €3–4M stretch target are presented and labeled — never conflated.</div>
-        </div>
-      </div>
-    </div>
-    <div class="footer-tag">Pasta Marini · Confidential</div>
-  </section>
-
-  <!-- ===== A5 RISK REGISTER ===== -->
-  <section class="slide" id="sA5" data-title="A5 · Risk Register">
-    <div class="slide-head">
-      <div class="eyebrow">Appendix A5 · Risk Register</div>
-      <h2>We name the <span class="accent">top risks, their owners, and concrete mitigations</span></h2>
-    </div>
-    <div class="body">
-      <div class="card" style="flex:1">
-        <table>
-          <thead><tr><th>Risk</th><th>Severity</th><th>Mitigation</th><th>Owner</th></tr></thead>
-          <tbody>
-            <tr><td>US antidumping duty volatility</td><td><span class="pill hi">High</span></td><td>Risk-sharing clauses; exit if duty &gt;35%; prioritise fresh</td><td>CIOO / Legal</td></tr>
-            <tr><td>MAP cold-chain execution</td><td><span class="pill hi">High</span></td><td>Y1 feasibility as hard gate; proven operator before Y2 capital</td><td>COO / CIOO</td></tr>
-            <tr><td>Organisational capacity (3–7 team)</td><td><span class="pill hi">High</span></td><td>Y1/Y2 key hires non-negotiable; hiring roadmap with plan</td><td>CIOO / HR</td></tr>
-            <tr><td>Domestic rebalancing pushback</td><td><span class="pill med">Medium</span></td><td>Contract-by-contract; absorb capacity before reducing volume</td><td>CEO / Sales</td></tr>
-            <tr><td>Family governance override</td><td><span class="pill med">Medium</span></td><td>Ring-fenced budget line; propose independent directors</td><td>CEO / CFO</td></tr>
-            <tr><td>Rana competitive response</td><td><span class="pill med">Medium</span></td><td>Compete in specialty chains where mass positioning is weak</td><td>CIOO / Mktg</td></tr>
-            <tr><td>NWC release assumption unvalidated</td><td><span class="pill med">Medium</span></td><td>Confirm actual Coop/Esselunga vs. US payment terms with data</td><td>CFO</td></tr>
-            <tr><td>Denmark organic cert. cost/timeline</td><td><span class="pill lo">Low-Med</span></td><td>Budget as net-new with 12+ mo lead; no assumed capability</td><td>CIOO / Quality</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <div class="footer-tag">Pasta Marini · Confidential</div>
-  </section>
-
-</div>
-
-<!-- ===== NAV ===== -->
-<div id="nav">
-  <button id="prev" aria-label="Previous">‹</button>
-  <span class="count"><span id="cur">1</span>/<span id="tot">1</span></span>
-  <button id="next" aria-label="Next">›</button>
-  <span class="title-mini" id="tmini"></span>
-  <button id="menuBtn" aria-label="Slide menu">☰</button>
-</div>
-
-<!-- ===== MENU ===== -->
-<div id="menu"><div class="panel"><h3>Jump to a slide</h3><div class="grid" id="menuGrid"></div></div></div>
-
-<script>
-(function(){
-  const slides = Array.from(document.querySelectorAll('.slide'));
-  let i = 0;
-  const curEl=document.getElementById('cur'), totEl=document.getElementById('tot'), tmini=document.getElementById('tmini');
-  totEl.textContent = slides.length;
-  const charted = {};
-
-  // Wrap each slide's BODY (not the header or footer) so only the body is ever
-  // auto-scaled — the header and its break line always stay full-width & identical.
-  slides.forEach(s=>{
-    const foot=s.querySelector(':scope > .footer-tag');
-    const head=s.querySelector(':scope > .slide-head');
-    const wrap=document.createElement('div');
-    wrap.className='fitwrap';
-    [...s.children].forEach(c=>{ if(c!==foot && c!==head) wrap.appendChild(c); });
-    s.insertBefore(wrap, foot || null);
-  });
-
-  // Scale the body down only when its natural height exceeds the room left below the header.
-  function fit(slide){
-    const wrap=slide.querySelector(':scope > .fitwrap');
-    if(!wrap) return;
-    wrap.style.transform='none';
-    wrap.style.flex='none';
-    wrap.style.height='auto';
-    const cs=getComputedStyle(slide);
-    let used=parseFloat(cs.paddingTop)+parseFloat(cs.paddingBottom);
-    const head=slide.querySelector(':scope > .slide-head');
-    if(head){ used += head.offsetHeight + parseFloat(getComputedStyle(head).marginBottom); }
-    const avail=slide.clientHeight-used;
-    const natural=wrap.offsetHeight;
-    wrap.style.flex='';
-    wrap.style.height='';
-    // small tolerance so sub-pixel rounding doesn't trigger a faint shrink
-    wrap.style.transform = natural>avail+6 ? 'scale('+(avail/natural).toFixed(4)+')' : 'none';
-  }
-
-  function show(n){
-    i = Math.max(0, Math.min(slides.length-1, n));
-    slides.forEach((s,k)=>s.classList.toggle('active', k===i));
-    curEl.textContent = i+1;
-    tmini.textContent = slides[i].dataset.title || '';
-    initCharts(slides[i].id);
-    fit(slides[i]);
-    requestAnimationFrame(()=>fit(slides[i]));
-  }
-  let rt; window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>fit(slides[i]),120);});
-  document.getElementById('next').onclick=()=>show(i+1);
-  document.getElementById('prev').onclick=()=>show(i-1);
-  document.addEventListener('keydown',e=>{
-    if(e.key==='ArrowRight'||e.key==='PageDown'){show(i+1);}
-    else if(e.key==='ArrowLeft'||e.key==='PageUp'){show(i-1);}
-    else if(e.key==='Home'){show(0);}
-    else if(e.key==='End'){show(slides.length-1);}
-    else if(e.key==='Escape'){menu.classList.remove('open');}
-  });
-
-  // menu
-  const menu=document.getElementById('menu'), grid=document.getElementById('menuGrid');
-  slides.forEach((s,k)=>{
-    if(s.id==='sA'){const sec=document.createElement('div');sec.className='sec';sec.textContent='Appendix';grid.appendChild(sec);}
-    const d=document.createElement('div');d.className='item';
-    d.innerHTML='<span class="ix">'+(k+1)+'</span><span>'+(s.dataset.title||'')+'</span>';
-    d.onclick=()=>{show(k);menu.classList.remove('open');};
-    grid.appendChild(d);
-  });
-  document.getElementById('menuBtn').onclick=()=>menu.classList.toggle('open');
-  menu.onclick=e=>{if(e.target===menu)menu.classList.remove('open');};
-
-  // ===== Chart theme =====
-  const GREEN='#1E4D3A',GREEN2='#2E6B4F',GOLD='#B0832F',BURG='#7E2B2B',INK='#5C544A',LINE='#DCD2BE';
-  Chart.defaults.font.family="Inter, Segoe UI, Helvetica Neue, Arial, sans-serif";
-  Chart.defaults.font.size=12.5;            /* legends/tooltips */
-  Chart.defaults.color=INK;
-  const money=v=>'€'+v.toLocaleString();
-  /* axis numbers may run smaller than body text to improve spacing */
-  const gridcfg={grid:{color:'rgba(220,210,190,.5)'},ticks:{color:INK,font:{size:11}}};
-
-  const builders={
-    c1(){
-      new Chart(document.getElementById('c1'),{
-        data:{labels:['2012','2015','2018','2022','2024'],
-        datasets:[
-          {type:'bar',label:'Total sales',data:[40000,60000,80000,60000,50000],backgroundColor:GREEN2,borderRadius:5,order:2,yAxisID:'y'},
-          {type:'line',label:'Net profit/(loss)',data:[1000,1200,1400,-300,-500],borderColor:BURG,backgroundColor:BURG,borderWidth:3,tension:.3,pointRadius:4,order:1,yAxisID:'y1'}
-        ]},
-        options:{responsive:true,maintainAspectRatio:false,
-          plugins:{legend:{position:'top'},tooltip:{callbacks:{label:c=>c.dataset.label+': '+money(c.parsed.y)}}},
-          scales:{y:{...gridcfg,title:{display:true,text:'Sales (€000)'}},
-                  y1:{position:'right',grid:{drawOnChartArea:false},title:{display:true,text:'Net profit (€000)'},ticks:{color:INK,font:{size:11}}}}}
-      });
-    },
-    c1b(){
-      const pieLabels={
-        id:'pieLabels',
-        afterDatasetsDraw(chart){
-          const ctx=chart.ctx, meta=chart.getDatasetMeta(0), ds=chart.data.datasets[0].data;
-          const total=ds.reduce((a,b)=>a+b,0);
-          meta.data.forEach((arc,idx)=>{
-            const p=arc.tooltipPosition();
-            const pct=Math.round(ds[idx]/total*100)+'%';
-            ctx.save();
-            ctx.font='800 14px Inter, sans-serif';
-            ctx.textAlign='center'; ctx.textBaseline='middle';
-            ctx.lineWidth=3.5; ctx.strokeStyle='rgba(255,255,255,.92)';
-            ctx.strokeText(pct,p.x,p.y);
-            ctx.fillStyle='#2B2620';
-            ctx.fillText(pct,p.x,p.y);
-            ctx.restore();
-          });
-        }
-      };
-      new Chart(document.getElementById('c1b'),{
-        type:'pie',
-        data:{labels:['Branded fresh','Branded dry','Pastries','Private label'],
-          datasets:[{data:[10,30,10,50],backgroundColor:[GOLD,GREEN,'#D8C79A','#B9A98A'],borderColor:'#fff',borderWidth:2}]},
-        options:{responsive:true,maintainAspectRatio:false,layout:{padding:4},
-          plugins:{legend:{display:false},
-            tooltip:{callbacks:{label:c=>c.label+': '+c.parsed+'% of sales'}}}},
-        plugins:[pieLabels]
-      });
-    },
-    c5(){
-      new Chart(document.getElementById('c5'),{
-        type:'bar',
-        data:{labels:['Today','Year 4 target'],
-        datasets:[
-          {label:'Private label',data:[45,25],backgroundColor:'#C9BFA8',stack:'s'},
-          {label:'Branded domestic',data:[40,43],backgroundColor:GREEN,stack:'s'},
-          {label:'Branded export (DACH+US)',data:[15,32],backgroundColor:GOLD,stack:'s'}
-        ]},
-        options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
-          plugins:{legend:{position:'top'},tooltip:{callbacks:{label:c=>c.dataset.label+': '+c.parsed.x+'% of capacity'}}},
-          scales:{x:{...gridcfg,stacked:true,max:100,ticks:{callback:v=>v+'%'}},y:{stacked:true,grid:{display:false}}}}
-      });
-    },
-    c6(){
-      new Chart(document.getElementById('c6'),{
-        type:'bar',
-        data:{labels:['Total pasta','Dry pasta','Fresh / chilled'],
-        datasets:[{label:'CAGR',data:[4.6,4.2,9.5],backgroundColor:[GREEN2,'#C9BFA8',GOLD],borderRadius:5}]},
-        options:{responsive:true,maintainAspectRatio:false,
-          plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+'% CAGR'}}},
-          scales:{y:{...gridcfg,ticks:{callback:v=>v+'%'},title:{display:true,text:'Forecast CAGR'}},x:{grid:{display:false}}}}
-      });
-    },
-    c8a(){
-      new Chart(document.getElementById('c8a'),{
-        type:'bar',
-        data:{labels:['Year 1','Year 2','Year 3','Year 4'],
-        datasets:[
-          {label:'Track 1 — dry',data:[340,650,830,950],backgroundColor:'#C9A24A',stack:'s',borderRadius:4},
-          {label:'Track 2 — fresh + pastry',data:[0,152,683,1300],backgroundColor:GREEN,stack:'s',borderRadius:4}
-        ]},
-        options:{responsive:true,maintainAspectRatio:false,
-          plugins:{legend:{position:'top'},tooltip:{callbacks:{label:c=>c.dataset.label+': '+money(c.parsed.y)+'K'}}},
-          scales:{x:{stacked:true,grid:{display:false}},y:{...gridcfg,stacked:true,title:{display:true,text:'US revenue (€000)'}}}}
-      });
-    },
-    c8b(){
-      new Chart(document.getElementById('c8b'),{
-        type:'bar',
-        data:{labels:['Downside','Base','Upside'],
-        datasets:[{label:'Y4 gross margin',data:[14,32,49],backgroundColor:[BURG,GREEN,GOLD],borderRadius:5}]},
-        options:{responsive:true,maintainAspectRatio:false,
-          plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+'% gross margin'}}},
-          scales:{y:{...gridcfg,ticks:{callback:v=>v+'%'},max:55},x:{grid:{display:false}}}}
-      });
-    },
-    c9a(){
-      new Chart(document.getElementById('c9a'),{
-        type:'bar',
-        data:{labels:['2024 EBIT','Mix → fresh','DACH recovery','US contribution','Year 4 EBIT'],
-        datasets:[{
-          data:[[0,2],[2,3.4],[3.4,4.6],[4.6,5.5],[0,5.5]],
-          backgroundColor:['#C9BFA8',GREEN2,GREEN2,GREEN2,GOLD],borderRadius:4}]},
-        options:{responsive:true,maintainAspectRatio:false,
-          plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>{const v=c.raw;return (v[1]-v[0]).toFixed(1)+' pts → '+v[1].toFixed(1)+'% EBIT';}}}},
-          scales:{y:{...gridcfg,ticks:{callback:v=>v+'%'},title:{display:true,text:'EBIT margin'}},x:{grid:{display:false}}}}
-      });
-    },
-    c9b(){
-      new Chart(document.getElementById('c9b'),{
-        type:'doughnut',
-        data:{labels:['Domestic dry branded','Private label','Domestic fresh branded','Germany','Pastries','Austria','Denmark','US (dry+fresh)'],
-        datasets:[{data:[19.5,16.25,6.5,7.5,3.25,1.5,1.0,2.25],
-          backgroundColor:[GREEN,'#C9BFA8',GOLD,GREEN2,'#D8C79A','#A8B8A0','#8FA888',BURG]}]},
-        options:{responsive:true,maintainAspectRatio:false,cutout:'55%',
-          plugins:{legend:{position:'right',labels:{boxWidth:12,font:{size:12}}},
-          tooltip:{callbacks:{label:c=>c.label+': €'+c.parsed+'M'}}}}
-      });
-    },
-    c10(){
-      new Chart(document.getElementById('c10'),{
-        type:'bar',
-        data:{labels:['Year 1','Year 2','Year 3','Year 4'],
-        datasets:[
-          {label:'Export-credit debt',data:[500,400,300,150],backgroundColor:GREEN2,stack:'s',borderRadius:4},
-          {label:'NWC release',data:[150,400,600,750],backgroundColor:GOLD,stack:'s',borderRadius:4},
-          {label:'Operating cash flow',data:[141,237,346,363],backgroundColor:BURG,stack:'s',borderRadius:4}
-        ]},
-        options:{responsive:true,maintainAspectRatio:false,
-          plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+money(c.parsed.y)+'K'}}},
-          scales:{x:{stacked:true,grid:{display:false}},y:{...gridcfg,stacked:true,title:{display:true,text:'Funding (€000)'}}}}
-      });
-    },
-    cA4(){
-      new Chart(document.getElementById('cA4'),{
-        type:'bar',
-        data:{labels:['MAP (chosen)','Frozen (rejected)'],
-        datasets:[
-          {label:'Gross margin %',data:[32,38],backgroundColor:GOLD,yAxisID:'y1',borderRadius:4},
-          {label:'Gross profit €K',data:[333,291],backgroundColor:GREEN,yAxisID:'y',borderRadius:4}
-        ]},
-        options:{responsive:true,maintainAspectRatio:false,
-          plugins:{legend:{position:'top'}},
-          scales:{y:{...gridcfg,title:{display:true,text:'Gross profit (€000)'}},
-                  y1:{position:'right',grid:{drawOnChartArea:false},ticks:{callback:v=>v+'%',font:{size:11}},title:{display:true,text:'Margin %'}},
-                  x:{grid:{display:false}}}}
-      });
-    }
-  };
-
-  function initCharts(slideId){
-    Object.keys(builders).forEach(id=>{
-      const cv=document.getElementById(id);
-      if(cv && cv.closest('.slide').id===slideId && !charted[id]){
-        charted[id]=true;
-        try{builders[id]();}catch(e){console.error(id,e);}
-      }
-    });
-  }
-
-  show(0);
-})();
-</script>
-</body>
-</html>
+  <section class="slide" id=
